@@ -97,8 +97,11 @@ class AdminVehicleCategorySerializer(serializers.ModelSerializer):
 class AdminVehicleWriteSerializer(serializers.ModelSerializer):
     """
     Vehicle yaratish va tahrirlash.
-    Rasmlar alohida /admin/fleet/images/ endpoint orqali yuklanadi.
+    main_image — ixtiyoriy, yuborilsa VehicleImage yaratib is_main=True qo'yadi.
+    Rasmlar alohida /admin/fleet/images/ endpoint orqali ham yuklanishi mumkin.
     """
+    main_image = serializers.ImageField(write_only=True, required=False)
+
     class Meta:
         model = Vehicle
         fields = (
@@ -111,12 +114,39 @@ class AdminVehicleWriteSerializer(serializers.ModelSerializer):
             'fuel_type', 'transmission', 'color',
             'suitable_for', 'rental_conditions',
             'is_active',
+            'main_image',
             'created_at', 'updated_at',
         )
         read_only_fields = ('id', 'created_at', 'updated_at')
         extra_kwargs = {
             'slug': {'required': False},
         }
+
+    def create(self, validated_data):
+        main_image = validated_data.pop('main_image', None)
+        vehicle = super().create(validated_data)
+        if main_image:
+            VehicleImage.objects.create(
+                vehicle=vehicle,
+                image=main_image,
+                is_main=True,
+                order=0,
+            )
+        return vehicle
+
+    def update(self, instance, validated_data):
+        main_image = validated_data.pop('main_image', None)
+        vehicle = super().update(instance, validated_data)
+        if main_image:
+            # Avvalgi asosiy rasmni is_main=False qilamiz
+            VehicleImage.objects.filter(vehicle=vehicle, is_main=True).update(is_main=False)
+            VehicleImage.objects.create(
+                vehicle=vehicle,
+                image=main_image,
+                is_main=True,
+                order=0,
+            )
+        return vehicle
 
 
 class AdminVehicleReadSerializer(serializers.ModelSerializer):

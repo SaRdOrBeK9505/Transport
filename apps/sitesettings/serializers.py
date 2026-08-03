@@ -3,12 +3,19 @@ from .models import SiteConfig
 
 
 class SiteConfigSerializer(serializers.ModelSerializer):
+    # Frontend "phone", "telegram", "whatsapp" deb kutayotgani uchun alias fieldlar
+    phone = serializers.CharField(source='phone_main', read_only=True)
+    telegram = serializers.URLField(source='telegram_link', read_only=True)
+    whatsapp = serializers.URLField(source='whatsapp_link', read_only=True)
+
     class Meta:
         model = SiteConfig
         fields = (
-            # Kontakt
+            # Kontakt (asl nomlar)
             'phone_main', 'phone_secondary', 'email', 'address',
-            # Ijtimoiy tarmoqlar
+            # Alias fieldlar — frontend uchun
+            'phone', 'telegram', 'whatsapp',
+            # Ijtimoiy tarmoqlar (asl nomlar)
             'telegram_link', 'whatsapp_link',
             'instagram_link', 'facebook_link', 'youtube_link',
             # Ish vaqti

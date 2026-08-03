@@ -116,6 +116,36 @@ class AdminVehicleViewSet(viewsets.ModelViewSet):
             return AdminVehicleWriteSerializer
         return AdminVehicleReadSerializer
 
+    def create(self, request, *args, **kwargs):
+        write_serializer = AdminVehicleWriteSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        write_serializer.is_valid(raise_exception=True)
+        vehicle = write_serializer.save()
+        read_serializer = AdminVehicleReadSerializer(
+            vehicle,
+            context={'request': request}
+        )
+        return Response(read_serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        write_serializer = AdminVehicleWriteSerializer(
+            instance,
+            data=request.data,
+            partial=partial,
+            context={'request': request}
+        )
+        write_serializer.is_valid(raise_exception=True)
+        vehicle = write_serializer.save()
+        read_serializer = AdminVehicleReadSerializer(
+            vehicle,
+            context={'request': request}
+        )
+        return Response(read_serializer.data)
+
     @action(detail=True, methods=['patch'], url_path='toggle_active')
     def toggle_active(self, request, pk=None):
         """PATCH /api/v1/admin/fleet/vehicles/{id}/toggle_active/"""

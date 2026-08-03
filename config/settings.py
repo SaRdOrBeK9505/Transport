@@ -112,7 +112,8 @@ USE_TZ = True
 # ─── Static & Media ───────────────────────────────────────────────────────────
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+# STATICFILES_DIRS faqat custom static fayllar bo'lganda kerak
+# STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -139,8 +140,8 @@ REST_FRAMEWORK = {
 
 # ─── Simple JWT ───────────────────────────────────────────────────────────────
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),   # xavfsizlik uchun qisqartirildi (8h → 30min)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),       # 30d → 7d
     'ROTATE_REFRESH_TOKENS': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
@@ -160,7 +161,26 @@ CORS_ALLOWED_ORIGINS = config(
     default='http://localhost:3000,http://127.0.0.1:3000',
     cast=Csv()
 )
+
+# Vercel preview deploylar uchun (masalan: transportv2-xxxx.vercel.app)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https://transportv2.*\.vercel\.app$',
+]
+
 CORS_ALLOW_CREDENTIALS = True
+
+# Preflight (OPTIONS) so'rovlari uchun ruxsat etilgan headerlar
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # ─── Celery ───────────────────────────────────────────────────────────────────
 CELERY_BROKER_URL = config('REDIS_URL', default='redis://localhost:6379/0')
