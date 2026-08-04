@@ -76,7 +76,7 @@ class ServiceDirection(TimeStampedModel, OrderableModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = slugify(self.title)
             # Agar shu slug band bo'lsa, unikal qilish uchun:
             original_slug = self.slug
             counter = 1

@@ -1,6 +1,7 @@
 from django.db.models import Count, Q
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -96,6 +97,7 @@ class AdminVehicleViewSet(viewsets.ModelViewSet):
     GET    /api/v1/admin/fleet/vehicles/{id}/images/         — mashina rasmlari
     """
     permission_classes = [IsAdminUser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]  # rasm yuklash uchun
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = VehicleFilter
     search_fields = ['name', 'brand', 'description', 'category__name']
