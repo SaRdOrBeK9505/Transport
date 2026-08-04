@@ -76,7 +76,13 @@ class ServiceDirection(TimeStampedModel, OrderableModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.name)
+            # Agar shu slug band bo'lsa, unikal qilish uchun:
+            original_slug = self.slug
+            counter = 1
+            while ServiceDirection.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
         super().save(*args, **kwargs)
 
     def __str__(self):
