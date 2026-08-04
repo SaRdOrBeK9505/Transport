@@ -121,7 +121,7 @@ class VehicleAdmin(admin.ModelAdmin):
 
     def price_display(self, obj):
         if obj.price_negotiable or not obj.price_per_day:
-            return format_html('<span style="color:#888;font-size:12px;">Kelishiladi</span>')
+            return mark_safe('<span style="color:#888;font-size:12px;">Kelishiladi</span>')
         return format_html(
             '<span style="font-size:12px;">{:,.0f}<br><small style="color:#999;">so\'m/kun</small></span>',
             obj.price_per_day

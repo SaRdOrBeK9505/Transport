@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.html import format_html
+from django.utils.html import format_html, mark_safe
 from .models import ServiceDirection, ServiceFeature
 
 
@@ -81,12 +81,12 @@ class ServiceDirectionAdmin(admin.ModelAdmin):
                 '<img src="{}" style="height:55px;width:80px;object-fit:cover;border-radius:4px;"/>',
                 obj.image.url
             )
-        return format_html('<span style="color:#aaa;font-size:11px;">Rasm yo\'q</span>')
+        return mark_safe('<span style="color:#aaa;font-size:11px;">Rasm yo\'q</span>')
     image_preview.short_description = 'Rasm'
 
     def suitable_vehicles_count(self, obj):
         count = obj.suitable_vehicles.count()
         if count:
             return format_html('<span style="color:#28a745;font-weight:bold;">{} ta</span>', count)
-        return format_html('<span style="color:#aaa;">—</span>')
+        return mark_safe('<span style="color:#aaa;">—</span>')
     suitable_vehicles_count.short_description = 'Mos mashinalar'
