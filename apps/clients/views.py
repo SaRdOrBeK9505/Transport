@@ -1,4 +1,5 @@
 from rest_framework import viewsets, filters
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import AllowAny
 
 from apps.common.permissions import IsAdminUser
@@ -12,7 +13,7 @@ from .serializers import PartnerClientSerializer, AdminPartnerClientSerializer
 # ══════════════════════════════════════════════════════════════════════════════
 
 class PartnerClientViewSet(viewsets.ReadOnlyModelViewSet):
-    """GET /api/v1/clients/"""
+    """GET /clients/list/"""
     queryset = PartnerClient.objects.filter(is_active=True).order_by('order')
     serializer_class = PartnerClientSerializer
     permission_classes = [AllowAny]
@@ -26,14 +27,15 @@ class AdminPartnerClientViewSet(viewsets.ModelViewSet):
     """
     Admin: Hamkorlar to'liq CRUD.
 
-    GET    /api/v1/admin/clients/           — barchasi (is_active=False ham)
-    POST   /api/v1/admin/clients/           — yangi hamkor + logo yuklash
-    GET    /api/v1/admin/clients/{id}/      — detail
-    PUT    /api/v1/admin/clients/{id}/      — to'liq yangilash
-    PATCH  /api/v1/admin/clients/{id}/      — qisman (masalan faqat order yoki is_active)
-    DELETE /api/v1/admin/clients/{id}/      — o'chirish
+    GET    /clients/admin/list/           — barchasi (is_active=False ham)
+    POST   /clients/admin/list/           — yangi hamkor + logo yuklash
+    GET    /clients/admin/list/{id}/      — detail
+    PUT    /clients/admin/list/{id}/      — to'liq yangilash
+    PATCH  /clients/admin/list/{id}/      — qisman (masalan faqat order yoki is_active)
+    DELETE /clients/admin/list/{id}/      — o'chirish
     """
     permission_classes = [IsAdminUser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]  # logo yuklash uchun
     serializer_class = AdminPartnerClientSerializer
     pagination_class = StandardPagination
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
