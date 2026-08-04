@@ -6,12 +6,13 @@ from .models import Order
 @receiver(post_save, sender=Order)
 def order_created_notification(sender, instance, created, **kwargs):
     """
-    Yangi ariza yaratilganda Celery orqali Telegram xabar yuborish.
-    Hozircha placeholder — notifications tayyor bo'lganda yoqiladi.
+    Yangi ariza yaratilganda Telegram xabar yuborish.
+    Hozircha o'chirilgan — Celery sozlangandan keyin yoqiladi.
     """
-    if created:
-        try:
-            from apps.notifications.tasks import send_new_order_notification
-            send_new_order_notification.delay(instance.id)
-        except ImportError:
-            pass
+    pass
+    # if created:
+    #     try:
+    #         from apps.notifications.tasks import send_new_order_notification
+    #         send_new_order_notification.delay(instance.id)
+    #     except Exception:
+    #         pass
