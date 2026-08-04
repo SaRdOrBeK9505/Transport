@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.html import format_html
+from django.utils.html import format_html, mark_safe
 from .models import PartnerClient
 
 
@@ -26,7 +26,7 @@ class PartnerClientAdmin(admin.ModelAdmin):
                 'background:#f5f5f5; padding:4px; border-radius:4px;"/>',
                 obj.logo.url
             )
-        return format_html('<span style="color:#aaa;">Logotip yo\'q</span>')
+        return mark_safe('<span style="color:#aaa;">Logotip yo\'q</span>')
     logo_preview.short_description = 'Logotip'
 
     def website_link(self, obj):

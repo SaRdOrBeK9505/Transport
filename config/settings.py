@@ -77,23 +77,28 @@ WSGI_APPLICATION = 'config.wsgi.application'
 AUTH_USER_MODEL = 'users.CustomUser'
 
 # ─── Database ─────────────────────────────────────────────────────────────────
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default=''),
-        'USER': config('DB_USER', default=''),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+DB_NAME = config('DB_NAME', default='')
+
+if DB_NAME:
+    # PostgreSQL — .env da DB_NAME berilgan bo'lsa
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': DB_NAME,
+            'USER': config('DB_USER', default=''),
+            'PASSWORD': config('DB_PASSWORD', default=''),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
     }
-}
-# SQLite (faqat local dev uchun):
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+else:
+    # SQLite — local dev uchun (DB_NAME .env da yo'q bo'lsa)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # ─── Password validation ──────────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [

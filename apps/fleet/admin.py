@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.html import format_html
+from django.utils.html import format_html, mark_safe
 from .models import VehicleCategory, Vehicle, VehicleImage
 
 
@@ -108,7 +108,7 @@ class VehicleAdmin(admin.ModelAdmin):
                 '<img src="{}" style="height:55px;width:80px;object-fit:cover;border-radius:4px;"/>',
                 img.image.url
             )
-        return format_html('<span style="color:#aaa;font-size:11px;">Rasm yo\'q</span>')
+        return mark_safe('<span style="color:#aaa;font-size:11px;">Rasm yo\'q</span>')
     main_image_preview.short_description = 'Rasm'
 
     def full_name_display(self, obj):
@@ -150,7 +150,7 @@ class VehicleAdmin(admin.ModelAdmin):
                 '<span style="background:#6f42c1;color:#fff;padding:2px 6px;'
                 'border-radius:3px;font-size:10px;">Климат</span>'
             )
-        return format_html(' '.join(badges)) if badges else '—'
+        return mark_safe(' '.join(badges)) if badges else '—'
     badges_display.short_description = "Belgilar"
 
     def get_queryset(self, request):
