@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.common.permissions import IsAdminUser
-from apps.common.pagination import StandardPagination
+from apps.common.pagination import StandardPagination, UnlimitedPagination
 from .models import ServiceDirection, ServiceFeature
 from .serializers import (
     ServiceDirectionListSerializer,
@@ -49,19 +49,9 @@ class ServiceFeatureViewSet(viewsets.ReadOnlyModelViewSet):
 class AdminServiceDirectionViewSet(viewsets.ModelViewSet):
     """
     Admin: Xizmat yo'nalishlari to'liq CRUD.
-
-    GET    /api/v1/admin/services/              — ro'yxat
-    POST   /api/v1/admin/services/              — yaratish
-    GET    /api/v1/admin/services/{id}/         — detail
-    PUT    /api/v1/admin/services/{id}/         — to'liq yangilash
-    PATCH  /api/v1/admin/services/{id}/         — qisman yangilash
-    DELETE /api/v1/admin/services/{id}/         — o'chirish
-
-    suitable_vehicles ni yangilash:
-    PATCH /api/v1/admin/services/{id}/  {"suitable_vehicles": [1, 3, 5]}
     """
     permission_classes = [IsAdminUser]
-    pagination_class = StandardPagination
+    pagination_class = UnlimitedPagination  # barcha xizmatlar, results strukturasi saqlanadi
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'short_description', 'description']
     ordering_fields = ['order', 'title', 'created_at']

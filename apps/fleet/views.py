@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
-from apps.common.pagination import StandardPagination
+from apps.common.pagination import StandardPagination, UnlimitedPagination
 from apps.common.permissions import IsAdminOrReadOnly, IsAdminUser
 from .models import VehicleCategory, Vehicle, VehicleImage
 from .serializers import (
@@ -64,16 +64,10 @@ class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
 class AdminVehicleCategoryViewSet(viewsets.ModelViewSet):
     """
     Admin: Kategoriyalar to'liq CRUD.
-
-    GET    /api/v1/admin/fleet/categories/          — ro'yxat
-    POST   /api/v1/admin/fleet/categories/          — yaratish
-    GET    /api/v1/admin/fleet/categories/{id}/     — detail
-    PUT    /api/v1/admin/fleet/categories/{id}/     — to'liq yangilash
-    PATCH  /api/v1/admin/fleet/categories/{id}/     — qisman yangilash
-    DELETE /api/v1/admin/fleet/categories/{id}/     — o'chirish
     """
     permission_classes = [IsAdminUser]
     serializer_class = AdminVehicleCategorySerializer
+    pagination_class = UnlimitedPagination
 
     def get_queryset(self):
         return VehicleCategory.objects.annotate(
@@ -102,7 +96,7 @@ class AdminVehicleViewSet(viewsets.ModelViewSet):
     filterset_class = VehicleFilter
     search_fields = ['name', 'brand', 'description', 'category__name']
     ordering_fields = ['seats', 'price_per_day', 'year', 'name', 'created_at']
-    pagination_class = StandardPagination
+    pagination_class = UnlimitedPagination  # admin panel uchun barcha mashinalar kerak
 
     def get_queryset(self):
         # Admin barcha mashinalarni ko'radi (is_active=False ham)

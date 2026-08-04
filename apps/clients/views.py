@@ -3,7 +3,7 @@ from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import AllowAny
 
 from apps.common.permissions import IsAdminUser
-from apps.common.pagination import StandardPagination
+from apps.common.pagination import StandardPagination, UnlimitedPagination
 from .models import PartnerClient
 from .serializers import PartnerClientSerializer, AdminPartnerClientSerializer
 
@@ -37,7 +37,7 @@ class AdminPartnerClientViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]
     parser_classes = [MultiPartParser, FormParser, JSONParser]  # logo yuklash uchun
     serializer_class = AdminPartnerClientSerializer
-    pagination_class = StandardPagination
+    pagination_class = UnlimitedPagination  # barcha hamkorlar, results strukturasi saqlanadi
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'website']
     ordering_fields = ['order', 'name', 'created_at']
