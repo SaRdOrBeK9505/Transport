@@ -3,6 +3,32 @@ from django.utils.text import slugify
 from apps.common.models import TimeStampedModel, OrderableModel
 
 
+def _unique_slug(model_class, base_slug, instance_pk=None, max_length=None):
+    """
+    Berilgan base_slug asosida unique slug qaytaradi.
+    Agar slug band bo'lsa, -2, -3, ... suffixlarini qo'shib tekshiradi.
+    instance_pk — update holatida o'zini exclude qilish uchun.
+    """
+    slug = base_slug
+    if max_length:
+        slug = slug[:max_length]
+    qs = model_class.objects.filter(slug=slug)
+    if instance_pk:
+        qs = qs.exclude(pk=instance_pk)
+    counter = 2
+    while qs.exists():
+        suffix = f'-{counter}'
+        if max_length:
+            slug = base_slug[:max_length - len(suffix)] + suffix
+        else:
+            slug = f'{base_slug}{suffix}'
+        qs = model_class.objects.filter(slug=slug)
+        if instance_pk:
+            qs = qs.exclude(pk=instance_pk)
+        counter += 1
+    return slug
+
+
 class VehicleCategory(TimeStampedModel, OrderableModel):
     name = models.CharField(max_length=100, verbose_name='Nomi')
     slug = models.SlugField(unique=True, max_length=120, blank=True)
@@ -14,7 +40,8 @@ class VehicleCategory(TimeStampedModel, OrderableModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            base = slugify(self.name)
+            self.slug = _unique_slug(VehicleCategory, base, self.pk, max_length=120)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -125,8 +152,9 @@ class Vehicle(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base = f'{self.brand}-{self.name}' if self.brand else self.name
-            self.slug = slugify(base)
+            base_text = f'{self.brand}-{self.name}' if self.brand else self.name
+            base = slugify(base_text)
+            self.slug = _unique_slug(Vehicle, base, self.pk, max_length=180)
         super().save(*args, **kwargs)
 
     def __str__(self):
