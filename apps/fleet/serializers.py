@@ -88,10 +88,8 @@ class AdminVehicleCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleCategory
         fields = ('id', 'name', 'slug', 'icon', 'order', 'vehicles_count', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'created_at', 'updated_at')
-        extra_kwargs = {
-            'slug': {'required': False},  # save() da avtomatik hosil bo'ladi
-        }
+        read_only_fields = ('id', 'slug', 'created_at', 'updated_at')
+        # slug — read_only: save() da avtomatik hosil bo'ladi, frontenddan o'zgartirish kerak emas
 
 
 class AdminVehicleWriteSerializer(serializers.ModelSerializer):
@@ -119,7 +117,8 @@ class AdminVehicleWriteSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('id', 'created_at', 'updated_at')
         extra_kwargs = {
-            'slug': {'required': False},
+            'slug': {'required': False, 'read_only': True},
+            # slug — read_only: save() da avtomatik hosil bo'ladi, PUT/PATCH da o'zgarmaydi
         }
 
     def create(self, validated_data):

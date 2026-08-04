@@ -72,7 +72,10 @@ class AdminServiceDirectionWriteSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at',
         )
         read_only_fields = ('id', 'created_at', 'updated_at')
-        extra_kwargs = {'slug': {'required': False}}
+        extra_kwargs = {
+            'slug': {'required': False, 'read_only': True},
+            # slug — read_only: save() da avtomatik hosil bo'ladi
+        }
 
     def _set_suitable_vehicles(self, instance, ids):
         from apps.fleet.models import Vehicle
